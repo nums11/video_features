@@ -16,13 +16,13 @@ import tensorflow as tf
 
 # turn off a ton of warnings produced by TF
 import logging
-if type(tf.contrib) != type(tf):
-    tf.contrib._warning = None
+# if type(tf.contrib) != type(tf):
+#     tf.contrib._warning = None
 logging.disable(logging.WARNING)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
 # tensorflow config
-cfg = tf.ConfigProto(allow_soft_placement=True)
+cfg = tf.compat.v1.ConfigProto(allow_soft_placement=True)
 cfg.gpu_options.allow_growth = True
 
 class ExtractVGGish(torch.nn.Module):
@@ -48,7 +48,7 @@ class ExtractVGGish(torch.nn.Module):
         # Define the model in inference mode, load the model, and
         # locate input and output tensors.
         # (credits: tensorflow models)
-        with tf.Graph().as_default(), tf.Session(config=cfg) as sess, tf.device(f'/device:GPU:{device_id}'):
+        with tf.Graph().as_default(), tf.compat.v1.Session(config=cfg) as sess, tf.device(f'/device:GPU:{device_id}'):
             vggish_slim.define_vggish_slim(training=False)
             vggish_slim.load_vggish_slim_checkpoint(sess, self.vggish_model_path)
             pproc = vggish_postprocess.Postprocessor(self.vggish_pca_path)
